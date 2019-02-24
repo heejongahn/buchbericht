@@ -1,22 +1,29 @@
 import React from "react";
 import { Component } from "react";
 import { StyleSheet, View } from "react-native";
+import { observer, inject } from "mobx-react";
 import { NavigationScreenProps } from "react-navigation";
-import BookEntity from "../../models/BookEntity";
+
 import BookItem from "../../components/BookItem";
+import RootStore from "../../stores/RootStore";
 
-const book: BookEntity = {
-  title: "함께 자라기",
-  author: "김창준",
-  isbn: "9788966262335",
-  linkUri:
-    "https://m.search.daum.net/search?w=bookpage&bookId=4833808&q=%ED%95%A8%EA%BB%98%20%EC%9E%90%EB%9D%BC%EA%B8%B0",
-  imageUri:
-    "https://search1.kakaocdn.net/thumb/C216x312.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F4833808%3Fmoddttm=201902032300"
-};
+interface Props extends NavigationScreenProps<{ isbn: string }> {
+  store?: RootStore;
+}
 
-export default class Book extends Component<NavigationScreenProps<any>> {
+@inject("store")
+@observer
+export default class Book extends Component<Props> {
   render() {
+    const { store, navigation } = this.props;
+    const book = store!.books.find(
+      book => book.isbn === navigation.getParam("isbn")
+    );
+
+    if (!book) {
+      return null;
+    }
+
     return (
       <View style={styles.container}>
         <BookItem key={book.isbn} book={book} />
