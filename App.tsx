@@ -1,10 +1,10 @@
 import React from "react";
 import { createStackNavigator, createAppContainer } from "react-navigation";
-
-import BookScreen from "./views/Book";
-import HomeScreen from "./views/Home";
 import { Provider } from "mobx-react";
-import { store } from "./stores/RootStore";
+
+import BookScreen from "./src/views/Book";
+import HomeScreen from "./src/views/Home";
+import { store } from "./src/stores/RootStore";
 
 store.initializeBooks();
 
