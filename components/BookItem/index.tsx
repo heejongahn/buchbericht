@@ -11,11 +11,12 @@ import BookEntity from "../../models/BookEntity";
 
 interface Props {
   book: BookEntity;
+  onClick?: () => void;
 }
 
-export default function BookItem({ book }: Props) {
+export default function BookItem({ book, onClick }: Props) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onClick}>
       <View style={styles.container}>
         <Text style={styles.title}>{book.title}</Text>
         <Text style={styles.author}>by {book.author}</Text>
