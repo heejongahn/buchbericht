@@ -1,36 +1,35 @@
-import React from "react";
-import { Component } from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { observer, inject } from "mobx-react";
 import { NavigationScreenProps } from "react-navigation";
 
 import BookItem from "../../components/BookItem";
-import RootStore from "../../stores/RootStore";
+import { StoreContext } from "../../stores/RootStore";
+import { Observer } from "mobx-react-lite";
 
-interface Props extends NavigationScreenProps<{ isbn: string }> {
-  store?: RootStore;
-}
+interface Props extends NavigationScreenProps<{ isbn: string }> {}
 
-@inject("store")
-@observer
-export default class Book extends Component<Props> {
-  render() {
-    const { store, navigation } = this.props;
-    const book = store!.books.find(
-      book => book.isbn === navigation.getParam("isbn")
-    );
+const Book: React.FC<Props> = ({ navigation }) => {
+  const store = useContext(StoreContext);
+  const book = store!.books.find(
+    book => book.isbn === navigation.getParam("isbn")
+  );
 
-    if (!book) {
-      return null;
-    }
-
-    return (
-      <View style={styles.container}>
-        <BookItem key={book.isbn} book={book} />
-      </View>
-    );
+  if (!book) {
+    return null;
   }
-}
+
+  return (
+    <Observer>
+      {() => (
+        <View style={styles.container}>
+          <BookItem key={book.isbn} book={book} />
+        </View>
+      )}
+    </Observer>
+  );
+};
+
+export default Book;
 
 const styles = StyleSheet.create({
   container: {

@@ -1,44 +1,43 @@
-import React from "react";
-import { Component } from "react";
+import React, { useContext } from "react";
+import { Observer } from "mobx-react-lite";
 import { Platform, StyleSheet, View, Text } from "react-native";
-import { observer, inject } from "mobx-react";
 import { NavigationScreenProps } from "react-navigation";
 
 import BookItem from "../../components/BookItem";
-import RootStore from "../../stores/RootStore";
+import { StoreContext } from "../../stores/RootStore";
 
 const currentPlatform = Platform.select({
   ios: "iOS",
   android: "Android"
 });
 
-interface Props extends NavigationScreenProps<{}> {
-  store?: RootStore;
-}
+interface Props extends NavigationScreenProps<{}> {}
 
-@inject("store")
-@observer
-export default class Home extends Component<Props> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>
-          Buchbericht, running on
-          <Text style={styles.currentPlatform}>{currentPlatform}</Text>
-        </Text>
-        {this.props.store!.books.map(book => (
-          <BookItem
-            key={book.isbn}
-            book={book}
-            onClick={() =>
-              this.props.navigation.navigate("Book", { isbn: book.isbn })
-            }
-          />
-        ))}
-      </View>
-    );
-  }
-}
+const Home: React.FC<Props> = ({ navigation }) => {
+  const store = useContext(StoreContext);
+
+  return (
+    <Observer>
+      {() => (
+        <View style={styles.container}>
+          <Text style={styles.title}>
+            Buchbericht, running on
+            <Text style={styles.currentPlatform}>{currentPlatform}</Text>
+          </Text>
+          {store!.books.map(book => (
+            <BookItem
+              key={book.isbn}
+              book={book}
+              onClick={() => navigation.navigate("Book", { isbn: book.isbn })}
+            />
+          ))}
+        </View>
+      )}
+    </Observer>
+  );
+};
+
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
